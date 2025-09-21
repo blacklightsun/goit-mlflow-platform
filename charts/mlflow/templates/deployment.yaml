@@ -21,8 +21,8 @@ spec:
         - /bin/sh
         - -c
         - |
-          pip install mlflow==2.8.1 psycopg2-binary boto3
-          cp -r /usr/local/lib/python3.9/site-packages/* /shared/
+          pip install mlflow==3.4.0 psycopg2-binary boto3
+          cp -r /usr/local/lib/python3.12/site-packages/* /shared/
         volumeMounts:
         - name: shared-packages
           mountPath: /shared
