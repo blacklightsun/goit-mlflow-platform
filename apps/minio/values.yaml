@@ -5,6 +5,7 @@ persistence:
   enabled: true
   size: 4Gi
   storageClass: ""
+  accessMode: ReadWriteOnce
 
 service:
   type: ClusterIP
@@ -35,3 +36,11 @@ resources:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+# Вимикаємо distributed mode повністю
+distributedMode:
+  enabled: false
+
+# Додаткові налаштування для standalone
+standalone:
+  enabled: true
