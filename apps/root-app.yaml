@@ -11,6 +11,9 @@ spec:
     repoURL: https://github.com/blacklightsun/goit-mlflow-platform.git
     targetRevision: HEAD
     path: apps
+    directory:
+      recurse: true  # Рекурсивний пошук в підпапках
+      include: "*/application.yaml"  # Шукаємо application.yaml в підпапках
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
