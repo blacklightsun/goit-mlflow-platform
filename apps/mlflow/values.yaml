@@ -1,0 +1,63 @@
+# Переопределяем значения из charts/mlflow/values.yaml
+image:
+  repository: python
+  tag: "3.9-slim"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5000
+
+ingress:
+  enabled: false
+  # Для production можна увімкнути:
+  # enabled: true
+  # className: nginx
+  # hosts:
+  #   - host: mlflow.local
+  #     paths:
+  #       - path: /
+  #         pathType: Prefix
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 100m
+  limits:
+    memory: 1Gi
+    cpu: 500m
+
+# Database configuration (перевизначаємо для локального середовища)
+database:
+  host: postgres-postgresql.postgres.svc.cluster.local
+  port: 5432
+  name: mlflow
+  username: mlflow
+  password: mlflow123
+
+# MinIO configuration (перевизначаємо для локального середовища)  
+minio:
+  endpoint: minio.minio.svc.cluster.local:9000
+  accessKey: minioadmin
+  secretKey: minioadmin123
+  bucket: mlflow-artifacts
+
+# MLflow specific configuration
+mlflow:
+  # Додаткові змінні середовища
+  extraEnv:
+    - name: MLFLOW_SERVE_ARTIFACTS
+      value: "true"
+    - name: MLFLOW_ARTIFACTS_DESTINATION
+      value: "s3://mlflow-artifacts"
+
+# Налаштування для локального кластера
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Persistence для локальних файлів (якщо потрібно)
+persistence:
+  enabled: false
+  size: 5Gi
+  storageClass: ""

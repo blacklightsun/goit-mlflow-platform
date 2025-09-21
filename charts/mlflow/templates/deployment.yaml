@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mlflow.fullname" . }}
+  labels:
+    {{- include "mlflow.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "mlflow.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mlflow.selectorLabels" . | nindent 8 }}
+    spec:
+      initContainers:
+      - name: install-mlflow
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          pip install mlflow==2.8.1 psycopg2-binary boto3
+          cp -r /usr/local/lib/python3.9/site-packages/* /shared/
+        volumeMounts:
+        - name: shared-packages
+          mountPath: /shared
+      containers:
+      - name: mlflow
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - name: http
+          containerPort: 5000
+          protocol: TCP
+        env:
+        - name: PYTHONPATH
+          value: "/shared"
+        envFrom:
+        - configMapRef:
+            name: {{ include "mlflow.fullname" . }}-config
+        command:
+        - /bin/sh
+        - -c
+        - |
+          export PYTHONPATH="/shared:$PYTHONPATH"
+          python -c "
+          import sys
+          sys.path.insert(0, '/shared')
+          from mlflow.server import run_server
+          run_server(
+            backend_store_uri='${MLFLOW_BACKEND_STORE_URI}',
+            default_artifact_root='${MLFLOW_ARTIFACT_ROOT}',
+            host='0.0.0.0',
+            port=5000
+          )"
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+        - name: shared-packages
+          mountPath: /shared
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: shared-packages
+        emptyDir: {}

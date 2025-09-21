@@ -1,0 +1,37 @@
+mode: standalone
+replicas: 1
+
+persistence:
+  enabled: true
+  size: 4Gi
+  storageClass: ""
+
+service:
+  type: ClusterIP
+  port: 9000
+
+consoleService:
+  type: ClusterIP
+  port: 9001
+
+auth:
+  rootUser: minioadmin
+  rootPassword: minioadmin123
+
+buckets:
+  - name: mlflow-artifacts
+    policy: none
+    purge: false
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+  limits:
+    memory: 512Mi
+    cpu: 500m
+
+# Налаштування для локального кластера
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -1,0 +1,42 @@
+auth:
+  postgresPassword: postgres123
+  username: mlflow
+  password: mlflow123
+  database: mlflow
+
+primary:
+  persistence:
+    enabled: true
+    size: 4Gi
+    storageClass: ""
+  
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+  
+  # Налаштування для development
+  configuration: |
+    max_connections = 200
+    shared_buffers = 128MB
+    effective_cache_size = 256MB
+    
+service:
+  type: ClusterIP
+  ports:
+    postgresql: 5432
+
+# Налаштування для локального кластера  
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Backup налаштування (optional)
+backup:
+  enabled: false
+
+metrics:
+  enabled: false

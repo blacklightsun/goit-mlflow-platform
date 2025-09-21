@@ -1,0 +1,37 @@
+image:
+  repository: python
+  tag: "3.9-slim"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5000
+
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 100m
+  limits:
+    memory: 1Gi
+    cpu: 500m
+
+persistence:
+  enabled: false
+
+# Database configuration
+database:
+  host: postgres-postgresql.postgres.svc.cluster.local
+  port: 5432
+  name: mlflow
+  username: mlflow
+  password: mlflow123
+
+# MinIO configuration
+minio:
+  endpoint: minio.minio.svc.cluster.local:9000
+  accessKey: minioadmin
+  secretKey: minioadmin123
+  bucket: mlflow-artifacts
