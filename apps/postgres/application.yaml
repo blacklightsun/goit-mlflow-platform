@@ -1,98 +1,98 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgres
+  namespace: argocd
+  finalizers:
+    - rresources-finalizer.argocd.argoproj.io/background
+spec:
+  project: default
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: postgresql
+    targetRevision: 13.2.24
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: postgres
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+
+
+
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: pg-pv
+# spec:
+#   capacity:
+#     storage: 4Gi
+#   accessModes:
+#     - ReadWriteOnce
+#   hostPath:
+#     path: /mnt/data/postgres
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: pg-pvc
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 4Gi
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
 # metadata:
 #   name: postgres
-#   namespace: argocd
-#   finalizers:
-#     - rresources-finalizer.argocd.argoproj.io/background
 # spec:
-#   project: default
-#   source:
-#     repoURL: https://charts.bitnami.com/bitnami
-#     chart: postgresql
-#     targetRevision: 13.2.24
-#     helm:
-#       valueFiles:
-#         - values.yaml
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: postgres
-#   syncPolicy:
-#     automated:
-#       prune: true
-#       selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true
-
-
-
-
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pg-pv
-spec:
-  capacity:
-    storage: 4Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: /mnt/data/postgres
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pg-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 4Gi
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: postgres
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres
-  template:
-    metadata:
-      labels:
-        app: postgres
-    spec:
-      securityContext:
-        fsGroup: 1001
-      containers:
-      - name: postgres
-        image: bitnami/postgresql:13
-        env:
-        - name: POSTGRESQL_USERNAME
-          value: mlflow
-        - name: POSTGRESQL_PASSWORD
-          value: mlflow123
-        - name: POSTGRESQL_DATABASE
-          value: mlflow
-        volumeMounts:
-        - mountPath: /bitnami/postgresql
-          name: postgres-data
-      volumes:
-      - name: postgres-data
-        persistentVolumeClaim:
-          claimName: pg-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres
-spec:
-  selector:
-    app: postgres
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
-  type: ClusterIP
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: postgres
+#   template:
+#     metadata:
+#       labels:
+#         app: postgres
+#     spec:
+#       securityContext:
+#         fsGroup: 1001
+#       containers:
+#       - name: postgres
+#         image: bitnami/postgresql:13
+#         env:
+#         - name: POSTGRESQL_USERNAME
+#           value: mlflow
+#         - name: POSTGRESQL_PASSWORD
+#           value: mlflow123
+#         - name: POSTGRESQL_DATABASE
+#           value: mlflow
+#         volumeMounts:
+#         - mountPath: /bitnami/postgresql
+#           name: postgres-data
+#       volumes:
+#       - name: postgres-data
+#         persistentVolumeClaim:
+#           claimName: pg-pvc
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: postgres
+# spec:
+#   selector:
+#     app: postgres
+#   ports:
+#     - protocol: TCP
+#       port: 5432
+#       targetPort: 5432
+#   type: ClusterIP
