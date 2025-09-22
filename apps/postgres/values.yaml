@@ -7,8 +7,13 @@ auth:
 primary:
   persistence:
     enabled: true
+    accessMode: ReadWriteOnce
     size: 4Gi
     storageClass: ""
+  securityContext:
+    enabled: true
+    runAsUser: 1001
+    fsGroup: 1001
   
   resources:
     requests:
