@@ -4,9 +4,9 @@ image:
   tag: "3.9-slim"
   pullPolicy: IfNotPresent
 
-service:
-  type: ClusterIP
-  port: 5000
+# service:
+  # type: ClusterIP
+  # port: 5000
 
 ingress:
   enabled: false
@@ -19,21 +19,21 @@ ingress:
   #       - path: /
   #         pathType: Prefix
 
-resources:
-  requests:
-    memory: 512Mi
-    cpu: 100m
-  limits:
-    memory: 1Gi
-    cpu: 500m
+# resources:
+#   requests:
+#     memory: 512Mi
+#     cpu: 100m
+#   limits:
+#     memory: 1Gi
+#     cpu: 500m
 
 # Database configuration (перевизначаємо для локального середовища)
-database:
-  host: postgres-postgresql.postgres.svc.cluster.local
-  port: 5432
-  name: mlflow
-  username: mlflow
-  password: mlflow123
+# database:
+#   host: postgres-postgresql.postgres.svc.cluster.local
+#   port: 5432
+#   name: mlflow
+#   username: mlflow
+#   password: mlflow123
 
 # MinIO configuration (перевизначаємо для локального середовища)  
 minio:
@@ -57,7 +57,44 @@ tolerations: []
 affinity: {}
 
 # Persistence для локальних файлів (якщо потрібно)
+# persistence:
+#   enabled: false
+#   size: 2Gi
+#   storageClass: ""
+
+
+backendStore:
+  type: postgresql
+  postgresql:
+    host: postgres         # ім’я Service PostgreSQL
+    port: 5432
+    username: mlflow
+    password: mlflow123
+    database: mlflow
+
+defaultArtifactRoot: /mlflow/artifacts
+
 persistence:
-  enabled: false
-  size: 2Gi
+  enabled: true
+  size: 4Gi
   storageClass: ""
+  accessMode: ReadWriteOnce
+  mountPath: /mlflow/artifacts
+
+env:
+  - name: MLFLOW_TRACKING_URI
+    value: postgresql://mlflow:mlflow123@postgres:5432/mlflow
+  - name: MLFLOW_ARTIFACT_URI
+    value: /mlflow/artifacts
+
+service:
+  type: ClusterIP
+  port: 5000
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+  limits:
+    memory: 512Mi
+    cpu: 500m
