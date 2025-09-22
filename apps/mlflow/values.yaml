@@ -1,7 +1,7 @@
 # Переопределяем значения из charts/mlflow/values.yaml
 image:
   repository: python
-  tag: "3.12-slim"
+  tag: "3.9-slim"
   pullPolicy: IfNotPresent
 
 service:
