@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: monitoring
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      access: proxy
+      url: http://prometheus-service:9090
+      isDefault: true
+      editable: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      updateIntervalSeconds: 10
+      allowUiUpdates: true
+      options:
+        path: /var/lib/grafana/dashboards
+  
+  mlflow-dashboard.json: |
+    {
+      "dashboard": {
+        "id": null,
+        "title": "MLFlow Experiments Dashboard",
+        "panels": [
+          {
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+            "id": 1,
+            "title": "Model Training Duration",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "mlflow_training_duration_seconds",
+                "refId": "A"
+              }
+            ]
+          },
+          {
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+            "id": 2,
+            "title": "Model Accuracy",
+            "type": "graph",
+            "targets": [
+              {
+                "expr": "mlflow_model_accuracy",
+                "refId": "A"
+              }
+            ]
+          },
+          {
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+            "id": 3,
+            "title": "Experiments Count",
+            "type": "stat",
+            "targets": [
+              {
+                "expr": "mlflow_experiments_total",
+                "refId": "A"
+              }
+            ]
+          }
+        ],
+        "schemaVersion": 16,
+        "version": 0
+      }
+    }
