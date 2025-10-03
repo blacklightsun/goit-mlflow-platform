@@ -19,7 +19,7 @@ spec:
       #   kubernetes.io/hostname: minikube
       containers:
       - name: mlflow
-        image: ghcr.io/mlflow/mlflow:v2.9.2
+        image: ghcr.io/mlflow/mlflow:v2.10.0
         command: ["mlflow", "server"]
         args:
           - "--host=0.0.0.0"
