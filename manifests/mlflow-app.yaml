@@ -12,7 +12,7 @@ metadata:
   # Назва додатку, яка буде відображатись в ArgoCD UI.
   name: mlflow
   # Розгортаємо цей 'Application' в неймспейс, де живе сам ArgoCD.
-  namespace: argopd
+  namespace: argocd
 spec:
   # Проєкт ArgoCD, до якого належить додаток. 'default' підходить для більшості випадків.
   project: default
