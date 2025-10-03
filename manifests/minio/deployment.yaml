@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio-deployment
-  namespace: minio-ns
+  namespace: minio
 spec:
   replicas: 1
   selector:
