@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/blacklightsun/goit-mlflow-platform
     targetRevision: main
-    path: manifests
+    path: manifests/mlflow
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
