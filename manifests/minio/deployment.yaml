@@ -1,0 +1,45 @@
+# 04-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-deployment
+  namespace: minio-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        image: quay.io/minio/minio:RELEASE.2024-01-25T05-56-54Z # Використовуйте актуальний образ
+        command:
+        - /bin/bash
+        - -c
+        - minio server /data --console-address ":9001"
+        env:
+        # Посилання на створений раніше Secret
+        - name: MINIO_ROOT_USER
+          valueFrom:
+            secretKeyRef:
+              name: minio-secret
+              key: accessKey
+        - name: MINIO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: minio-secret
+              key: secretKey
+        ports:
+        - containerPort: 9000 # Порт для S3 API
+        - containerPort: 9001 # Порт для веб-інтерфейсу
+        volumeMounts:
+        - name: storage # Монтування диска
+          mountPath: "/data"
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: minio-pvc # Посилання на створений PVC
