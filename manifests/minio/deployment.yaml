@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: minio
-        image: quay.io/minio/minio:RELEASE.2024-01-25T05-56-54Z # Використовуйте актуальний образ
+        image: quay.io/minio/minio:latest # Використовуйте актуальний образ
         command:
         - /bin/bash
         - -c
