@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mlflow
+  name: platform
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -10,10 +10,10 @@ spec:
   source:
     repoURL: https://github.com/blacklightsun/goit-mlflow-platform
     targetRevision: main
-    path: manifests/mlflow
+    path: manifests
   destination:
     server: https://kubernetes.default.svc
-    namespace: mlflow
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
