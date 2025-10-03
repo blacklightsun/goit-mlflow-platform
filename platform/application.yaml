@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: my-app      # Ім'я вашого додатку в Argo CD
+  name: mlflow-app      # Ім'я вашого додатку в Argo CD
   namespace: argocd  # Завжди створюється в неймспейсі Argo CD
 spec:
   project: default # Проєкт, до якого належить додаток
@@ -13,7 +13,7 @@ spec:
 
   destination:
     server: 'https://kubernetes.default.svc' # Адреса Kubernetes API вашого кластера
-    namespace: my-app-namespace             # Неймспейс, в який потрібно розгорнути додаток
+    namespace: mlflow             # Неймспейс, в який потрібно розгорнути додаток
 
   syncPolicy:
     automated:
