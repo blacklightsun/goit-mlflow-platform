@@ -28,7 +28,7 @@ spec:
             # Вказуємо MLflow адресу нашого MinIO сервера.
             # Це стандартна внутрішня DNS-адреса Kubernetes: <service-name>.<namespace>.svc.cluster.local:<port>
             - name: MLFLOW_S3_ENDPOINT_URL
-              value: "http://minio-service.minio-ns.svc.cluster.local:9000"
+              value: "http://minio-service.minio.svc.cluster.local:9000"
 
             # 🔑 Беремо ключі доступу з Kubernetes Secret, який ви створили для MinIO.
             # Це безпечний спосіб передавати паролі, не записуючи їх у деплоймент.
