@@ -1,0 +1,46 @@
+# ---
+# 2. Розгортання (Deployment)
+# Цей ресурс керує запуском та життєвим циклом поду з MLflow.
+# ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-deployment
+  namespace: mlflow
+spec:
+  # Нам потрібна лише одна копія (репліка) MLflow сервера.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        # Ця мітка 'app: mlflow' є ключовою.
+        # Сервіс буде використовувати її, щоб знайти цей под.
+        app: mlflow
+    spec:
+      containers:
+        - name: mlflow-container
+          # Використовуємо офіційний образ MLflow з GitHub Container Registry.
+          image: ghcr.io/mlflow/mlflow:v2.12.2
+                # Команда для запуску MLflow сервера з потрібними нам параметрами.
+          command: ["mlflow", "server"]
+          args: [
+                "--host", "0.0.0.0", # Слухати на всіх мережевих інтерфейсах всередині контейнера.
+                "--backend-store-uri", "sqlite:////mlflow-data/mlflow.db", # Шлях до бази даних SQLite на примонтованому томі.
+                "--default-artifact-root", "/mlflow-data/artifacts" # Шлях до директорії артефактів на томі.
+          ]
+          ports:
+                # Відкриваємо порт 5000 всередині контейнера.
+            - containerPort: 5000
+          
+          volumeMounts:
+            - name: mlflow-storage
+              mountPath: /mlflow-data # Всі дані будуть записуватись сюди.
+              # Визначаємо, звідки брати том для монтування.
+      volumes:
+        - name: mlflow-storage
+          persistentVolumeClaim:
+                # Посилаємось на PVC, створений вище.
+            claimName: mlflow-pvc
