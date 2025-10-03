@@ -33,6 +33,19 @@ spec:
             secretKeyRef:
               name: minio-secret
               key: secretKey
+        # ❗️ ДОДАНО: Хук, який створює бакет після запуску контейнера.
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - "/bin/sh"
+                - "-c"
+                - >
+                  until mc alias set local http://localhost:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD; do
+                    echo "--- чекаємо на запуск MinIO ---" && sleep 1;
+                  done;
+                  mc mb local/mlflow-artifacts --ignore-existing;
+                  echo "--- бакет mlflow-artifacts перевірено/створено ---";
         ports:
         - containerPort: 9000 # Порт для S3 API
         - containerPort: 9001 # Порт для веб-інтерфейсу
