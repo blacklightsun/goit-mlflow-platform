@@ -7,7 +7,7 @@ spec:
   project: default # Проєкт, до якого належить додаток
 
   source:
-    repoURL: 'https://github.com/your-username/your-git-repo.git' # URL вашого Git-репозиторію
+    repoURL: 'https://github.com/blacklightsun/goit-mlflow-platform.git' # URL вашого Git-репозиторію
     path: 'manifests/mlflow'  # Шлях до директорії з маніфестами, Helm-чартом або Kustomize
     targetRevision: HEAD            # Гілка, тег або хеш коміту для відстеження
 
