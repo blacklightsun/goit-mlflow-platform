@@ -6,7 +6,7 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: infra-tools
+    namespace: argocd
     server: "https://kubernetes.default.svc"
   source:
     repoURL: "https://prometheus-community.github.io/helm-charts"
